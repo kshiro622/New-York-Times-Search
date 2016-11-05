@@ -1,0 +1,30 @@
+$(document).ready(function(){	
+
+	var apiKey = '46ba128fd7fe4d9bb083047938f7d947';
+	var searchTerm = $('#search-term').val().trim();
+	var startYear = $('start-year').val().trim() + '0101';
+	var endYear = $('end-year').val().trim() + '0101';
+	var records = $('#num-of-records').val().trim().int();
+	var queryURL = "https://api.nytimes.com/svc/search/v2/articlesearch.json";	
+	
+	queryURL += '?' + $.param({
+  		'api-key': apiKey,
+		'q': searchTerm,
+		'begin_date': startYear,
+		'end_date': endYear
+	});
+
+	$('#search').on('click', function(){
+		$.ajax({
+			url: queryURL, 
+			method: 'GET'
+		}).done(function(response) {
+			for (var i = 0; i < records + 1; i++) {
+				var articleTitle = $('<h4>').append(response.response.docs[i].headline.main);
+				var articles = $('<div>').addClass('col-sm-12').append(response.response.docs[i].web_url);
+				$('#search-results').append(articleTitle);
+				$('#search-results').append(articles);
+			}
+		});
+	});
+});
